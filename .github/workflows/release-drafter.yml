@@ -1,19 +1,18 @@
-name: Release Drafter
+# .github/workflows/release-drafter.yml
+name: Draft Release Notes
 
 on:
   push:
     branches:
-      - stage
-  pull_request:
-    types: [closed]
+      - stage # Runs when PRs are merged into stage
 
 jobs:
   update_release_draft:
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter@v6
         with:
-          config-name: release-drafter.yml
+          # Use a config file to customize labels and categories
+          config-name: release-drafter-config.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
