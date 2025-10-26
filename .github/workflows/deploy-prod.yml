@@ -1,33 +1,39 @@
+# .github/workflows/deploy-prod.yml
 name: Deploy to Production
 
 on:
   release:
-    types: [published]
+    types: [published] # Triggers ONLY when you publish a release
 
 jobs:
   deploy-prod:
     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+    # Set Vercel env vars for the CLI
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: Setup Node.js
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        # This automatically checks out the specific Git tag of the release
+
+      - name: Install Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: "20" # Or your project's Node.js version
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Vercel CLI
+        run: npm install -g vercel
 
-      - name: Build project
-        run: npm run build
+      - name: Pull Vercel Project Settings
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Deploy to Vercel (Production)
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROD_PROJECT_ID }}
-          working-directory: ./
-          vercel-args: "--prod"
+      - name: Build Project
+        # The --prod flag ensures production-specific environment variables are used
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel Production
+        # The --prod flag aliases this deployment to your production domains
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
