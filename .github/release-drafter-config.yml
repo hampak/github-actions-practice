@@ -14,7 +14,7 @@ categories:
     labels:
       - "fix"
       - "bug"
-  - title: " Other Chores"
+  - title: "🔧 Other Chores"
     labels:
       - "chore"
       - "docs"
