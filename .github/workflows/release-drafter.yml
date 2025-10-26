@@ -2,9 +2,14 @@
 name: Draft Release Notes
 
 on:
-  push:
+  pull_request:
+    types: [closed]
     branches:
-      - stage # Runs when PRs are merged into stage
+      - stage
+
+permissions:
+  contents: write
+  pull-requests: read
 
 jobs:
   update_release_draft:
