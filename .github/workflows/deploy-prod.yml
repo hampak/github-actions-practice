@@ -38,3 +38,5 @@ jobs:
           github-comment: false
         env:
           VERCEL_GIT_COMMIT_REF: stage
+          VERCEL_GIT_COMMIT_SHA: ${{ github.sha }}
+          VERCEL_GIT_COMMIT_MESSAGE: "Deploying stage branch for release ${{ github.event.release.tag_name }}"
